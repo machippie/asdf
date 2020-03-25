@@ -1,0 +1,20 @@
+# Standards: 0.1
+---
+- name: Fact asdf user
+  set_fact:
+    asdf_user: "{{ asdf_user | default(homebrew_user) | default(ansible_user_id) }}"
+  tags:
+    - asdf
+
+- become: "{{ (asdf_user != ansible_user_id) | bool }}"
+  become_user: "{{ asdf_user }}"
+  block:
+    - name: Install required package
+      ignore_errors: True
+      homebrew:
+        name: asdf
+        state: latest
+      tags:
+        - asdf
+
+...
